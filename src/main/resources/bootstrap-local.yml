@@ -1,0 +1,8 @@
+env: local
+
+spring:
+  security:
+    user:
+      name: flakesoup
+      password: flakesoup
+      roles: ADMIN

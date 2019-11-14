@@ -1,0 +1,32 @@
+env: local
+
+server:
+  port: 16997
+
+spring:
+  application:
+    name: flakesoup-auth
+  # 配置中心
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        service-id: flakesoup-config
+  profiles:
+    active: ${env}
+  main:
+    allow-bean-definition-overriding: true
+
+# 注册中心配置
+eureka:
+  auth:
+    user: flakesoup
+    password: flakesoup
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${eureka.auth.user}:${eureka.auth.password}@eureka-server:18761/eureka/
