@@ -38,6 +38,7 @@ public class JwtAuthenticationHeaderFilter extends OncePerRequestFilter {
             Jwt jwt = JwtHelper.decodeAndVerify(token, jwtVerifier);
             String claims = jwt.getClaims();
             user = JSON.parseObject(claims, JwtUser.class);
+            System.out.println(user);
             //todo: 可以在这里添加检查用户是否过期,冻结...
         }catch (Exception e){
             //这里也可以filterChain.doFilter(request,response)然后return,那最后就会调用

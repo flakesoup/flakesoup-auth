@@ -1,4 +1,4 @@
-package com.flakesoup.auth.jwt.config;
+package com.flakesoup.auth.jwt.config.filter;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

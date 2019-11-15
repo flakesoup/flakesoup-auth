@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ApiLoginSuccessHandler implements AuthenticationSuccessHandler {
+public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     private RsaSigner jwtSigner;

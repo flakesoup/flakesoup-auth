@@ -2,17 +2,17 @@ package com.flakesoup.auth.jwt.config;
 
 import com.flakesoup.auth.jwt.config.filter.JwtAuthenticationHeaderFilter;
 import com.flakesoup.auth.jwt.config.filter.JwtUsernamePasswordLoginFilter;
-import com.flakesoup.auth.jwt.config.handler.ApiLoginExpiredHandler;
-import com.flakesoup.auth.jwt.config.handler.ApiLoginFailedHandler;
-import com.flakesoup.auth.jwt.config.handler.ApiLoginSuccessHandler;
-import com.flakesoup.auth.jwt.config.handler.ApiPermDeniedHandler;
+import com.flakesoup.auth.jwt.config.handler.JwtLoginExpiredHandler;
+import com.flakesoup.auth.jwt.config.handler.JwtLoginFailedHandler;
+import com.flakesoup.auth.jwt.config.handler.JwtLoginSuccessHandler;
+import com.flakesoup.auth.jwt.config.handler.JwtPermDeniedHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jwt.crypto.sign.RsaSigner;
@@ -31,12 +31,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
-     * 查询用户服务
+     * 登录过滤器的授权提供者
      */
-    @Bean
-    public UserDetailsService jwtUserDetailService() {
-        return new JwtUserDetailService();
-    }
+    @Autowired
+    private AuthenticationProvider jwtAuthenticationProvider;
 
     /**
      * 私钥签名
@@ -63,19 +61,11 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 登录过滤器的授权提供者
-     */
-    @Bean
-    public AuthenticationProvider jwtAuthenticationProvider() {
-        return new JwtAuthenticationProvider();
-    }
-
-    /**
      * 登录成功处理
      */
     @Bean
     public AuthenticationSuccessHandler jwtLoginSuccessHandler() {
-        return new ApiLoginSuccessHandler();
+        return new JwtLoginSuccessHandler();
     }
 
     /**
@@ -83,7 +73,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public AuthenticationFailureHandler jwtLoginFailedHandler() {
-        return new ApiLoginFailedHandler();
+        return new JwtLoginFailedHandler();
     }
 
     /**
@@ -91,7 +81,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public AuthenticationEntryPoint jwtExpiredHandler() {
-        return new ApiLoginExpiredHandler();
+        return new JwtLoginExpiredHandler();
     }
 
     /**
@@ -99,7 +89,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public AccessDeniedHandler jwtAccessDeniedHandler() {
-        return new ApiPermDeniedHandler();
+        return new JwtPermDeniedHandler();
     }
 
     /**
@@ -143,7 +133,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
 
             // 将授权提供者注册到授权管理器中(AuthenticationManager)
-            .authenticationProvider(jwtAuthenticationProvider())
+            .authenticationProvider(jwtAuthenticationProvider)
             .addFilterAfter(jwtUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(jwtAuthenticationHeaderFilter(), JwtUsernamePasswordLoginFilter.class)
 

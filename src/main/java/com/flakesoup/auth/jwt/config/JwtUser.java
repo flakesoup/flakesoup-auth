@@ -12,16 +12,25 @@ import java.util.stream.Collectors;
 
 @Data
 public class JwtUser implements UserDetails {
+    private Long userid;
     private String username;
     private String password;
+    private String userext;
     private List<SimpleGrantedAuthority> authorities;
 
-    public JwtUser() {
+    public JwtUser(String username, String password, String ... roles) {
+        this(username, password, "", 0L, roles);
     }
 
-    public JwtUser(String username, String password, String ... roles) {
+    public JwtUser(String username, String password, String userext, Long userid) {
+        this(username, password, userext, userid, "");
+    }
+
+    public JwtUser(String username, String password, String userext, Long userid, String ... roles) {
+        this.userid = userid;
         this.username = username;
         this.password = password;
+        this.userext = userext;
         this.authorities= Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
