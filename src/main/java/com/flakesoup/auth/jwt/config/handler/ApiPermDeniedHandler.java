@@ -1,4 +1,4 @@
-package com.flakesoup.auth.jwt.handler;
+package com.flakesoup.auth.jwt.config.handler;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;

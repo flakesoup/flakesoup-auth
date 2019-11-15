@@ -1,6 +1,7 @@
-package com.flakesoup.auth.jwt.handler;
+package com.flakesoup.auth.jwt.config.handler;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.jwt.JwtHelper;
@@ -14,7 +15,8 @@ import java.io.IOException;
 
 public class ApiLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private RsaSigner signer;
+    @Autowired
+    private RsaSigner jwtSigner;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
@@ -22,13 +24,9 @@ public class ApiLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 生成token返回
         String userJsonStr = JSON.toJSONString(authentication.getPrincipal());
-        String token = JwtHelper.encode(userJsonStr, signer).getEncoded();
+        String token = JwtHelper.encode(userJsonStr, jwtSigner).getEncoded();
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         httpServletResponse.getWriter().write("{\"code\": \"200\", \"msg\": \"登录成功\", \"data\": {\"access_token\": \"" + token + "\"}}");
-    }
-
-    public void setSigner(RsaSigner signer) {
-        this.signer = signer;
     }
 }

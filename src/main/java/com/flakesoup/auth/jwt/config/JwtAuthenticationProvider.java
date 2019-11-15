@@ -1,6 +1,5 @@
 package com.flakesoup.auth.jwt.config;
 
-import com.flakesoup.auth.jwt.token.JwtUsernamePasswordLoginToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -18,38 +17,38 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      * 供根据用户名查询用户,获取UserDetails的方法
      */
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService jwtUserDetailService;
 
     /**
      * 提供加密方式,密码验证时,需要加密后进行对比
      */
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder jwtPasswordEncoder;
 
     /**
      * 认证提供者进行认证,注意这里传入的authentication对象,是JwtLoginFilter里调用
-     * @see JwtUsernamePasswordLoginToken#JwtUsernamePasswordLoginToken(Object, Object) 方法生成的,是未认证状态的(setAuthenticated(false))
+     * @see JwtUsernamePasswordAuthenticationToken#JwtUsernamePasswordAuthenticationToken(Object, Object) 方法生成的,是未认证状态的(setAuthenticated(false))
      *  此方法会返回一个已认证状态的authentication
      * @param authentication
-     * @return JwtUsernamePasswordLoginToken
+     * @return JwtUsernamePasswordAuthenticationToken
      * @throws AuthenticationException
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         //获取用户
         String userName= authentication.getName();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+        UserDetails userDetails = jwtUserDetailService.loadUserByUsername(userName);
 
         //转换authentication 认证时会先调用support方法,受支持才会调用,所以能强转
-        JwtUsernamePasswordLoginToken jwtUsernamePasswordLoginToken = (JwtUsernamePasswordLoginToken) authentication;
+        JwtUsernamePasswordAuthenticationToken jwtUsernamePasswordAuthenticationToken = (JwtUsernamePasswordAuthenticationToken) authentication;
 
         //检查
         defaultCheck(userDetails);
-        credentialsCheck(userDetails, jwtUsernamePasswordLoginToken);
+        credentialsCheck(userDetails, jwtUsernamePasswordAuthenticationToken);
 
         //构造已认证的authentication
-        JwtUsernamePasswordLoginToken authenticatedToken = new JwtUsernamePasswordLoginToken(userDetails, jwtUsernamePasswordLoginToken.getCredentials(), userDetails.getAuthorities());
-        authenticatedToken.setDetails(jwtUsernamePasswordLoginToken.getDetails());
+        JwtUsernamePasswordAuthenticationToken authenticatedToken = new JwtUsernamePasswordAuthenticationToken(userDetails, jwtUsernamePasswordAuthenticationToken.getCredentials(), userDetails.getAuthorities());
+        authenticatedToken.setDetails(jwtUsernamePasswordAuthenticationToken.getDetails());
         return authenticatedToken;
     }
 
@@ -58,19 +57,19 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public boolean supports(Class<?> authentication) {
-        return (JwtUsernamePasswordLoginToken.class.isAssignableFrom(authentication));
+        return (JwtUsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
 
     /**
      * 检查密码是否正确
      */
     private void credentialsCheck(UserDetails userDetails,
-                                  JwtUsernamePasswordLoginToken authentication) throws AuthenticationException {
+                                  JwtUsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
             throw new BadCredentialsException("Bad credentials");
         }
         String presentedPassword = authentication.getCredentials().toString();
-        if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+        if (!jwtPasswordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             throw new BadCredentialsException("Bad credentials");
         }
     }
@@ -90,13 +89,5 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         if (!user.isAccountNonExpired()) {
             throw new AccountExpiredException("User account has expired");
         }
-    }
-
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
     }
 }

@@ -1,6 +1,5 @@
 package com.flakesoup.auth.jwt.config;
 
-import com.flakesoup.auth.jwt.token.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,13 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtUserDetailServiceImpl implements UserDetailsService {
-
-    private final PasswordEncoder passwordEncoder;
+public class JwtUserDetailService implements UserDetailsService {
 
     @Autowired
-    public JwtUserDetailServiceImpl(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    public JwtUserDetailService() {
     }
 
     /**

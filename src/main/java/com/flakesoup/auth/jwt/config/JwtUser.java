@@ -1,5 +1,6 @@
-package com.flakesoup.auth.jwt.token;
+package com.flakesoup.auth.jwt.config;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Data
 public class JwtUser implements UserDetails {
     private String username;
     private String password;
@@ -57,17 +58,5 @@ public class JwtUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setAuthorities(List<SimpleGrantedAuthority> authorities) {
-        this.authorities = authorities;
     }
 }

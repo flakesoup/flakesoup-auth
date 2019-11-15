@@ -1,7 +1,7 @@
-package com.flakesoup.auth.jwt.filter;
+package com.flakesoup.auth.jwt.config.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flakesoup.auth.jwt.token.JwtUsernamePasswordLoginToken;
+import com.flakesoup.auth.jwt.config.JwtUsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -34,12 +34,12 @@ public class JwtUsernamePasswordLoginFilter extends UsernamePasswordAuthenticati
                 String password = this.obtainPassword(request);
 
                 // 创建未认证的凭证(etAuthenticated(false)),注意此时凭证中的主体principal为用户名
-                JwtUsernamePasswordLoginToken jwtUsernamePasswordLoginToken = new JwtUsernamePasswordLoginToken(username, password);
+                JwtUsernamePasswordAuthenticationToken jwtUsernamePasswordAuthenticationToken = new JwtUsernamePasswordAuthenticationToken(username, password);
                 // 将认证详情(ip,sessionId)写到凭证
-                this.setDetails(request, jwtUsernamePasswordLoginToken);
+                this.setDetails(request, jwtUsernamePasswordAuthenticationToken);
                 // AuthenticationManager获取受支持的AuthenticationProvider(这里也就是JwtAuthenticationProvider),
                 // 生成已认证的凭证,此时凭证中的主体为userDetails
-                return this.getAuthenticationManager().authenticate(jwtUsernamePasswordLoginToken);
+                return this.getAuthenticationManager().authenticate(jwtUsernamePasswordAuthenticationToken);
             } catch (Exception e) {
                 throw new BadCredentialsException("坏的凭证");
             }

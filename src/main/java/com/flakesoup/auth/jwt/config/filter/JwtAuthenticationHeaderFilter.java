@@ -1,8 +1,9 @@
-package com.flakesoup.auth.jwt.filter;
+package com.flakesoup.auth.jwt.config.filter;
 
 import com.alibaba.fastjson.JSON;
-import com.flakesoup.auth.jwt.token.JwtUsernamePasswordLoginToken;
-import com.flakesoup.auth.jwt.token.JwtUser;
+import com.flakesoup.auth.jwt.config.JwtUser;
+import com.flakesoup.auth.jwt.config.JwtUsernamePasswordAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
@@ -17,14 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 拦截请求进行token验证
+ * 拦截请求进行header token验证
  */
-public class JwtAuthenticationHeadFilter extends OncePerRequestFilter {
-    private RsaVerifier verifier;
+public class JwtAuthenticationHeaderFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private RsaVerifier jwtVerifier;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader("Authentication");
+        String token = request.getHeader("Authorization");
         if (token==null || token.isEmpty()){
             filterChain.doFilter(request,response);
             return;
@@ -32,7 +35,7 @@ public class JwtAuthenticationHeadFilter extends OncePerRequestFilter {
 
         JwtUser user;
         try {
-            Jwt jwt = JwtHelper.decodeAndVerify(token, verifier);
+            Jwt jwt = JwtHelper.decodeAndVerify(token, jwtVerifier);
             String claims = jwt.getClaims();
             user = JSON.parseObject(claims, JwtUser.class);
             //todo: 可以在这里添加检查用户是否过期,冻结...
@@ -43,14 +46,9 @@ public class JwtAuthenticationHeadFilter extends OncePerRequestFilter {
             response.getWriter().write("token 失效");
             return;
         }
-        JwtUsernamePasswordLoginToken jwtUsernamePasswordLoginToken = new JwtUsernamePasswordLoginToken(user, "", user.getAuthorities());
-        jwtUsernamePasswordLoginToken.setDetails(new WebAuthenticationDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(jwtUsernamePasswordLoginToken);
+        JwtUsernamePasswordAuthenticationToken jwtUsernamePasswordAuthenticationToken = new JwtUsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
+        jwtUsernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(jwtUsernamePasswordAuthenticationToken);
         filterChain.doFilter(request,response);
-    }
-
-
-    public void setVerifier(RsaVerifier verifier) {
-        this.verifier = verifier;
     }
 }
