@@ -1,15 +1,14 @@
-package com.flakesoup.auth.webpage.controller;
+package com.flakesoup.auth.jwt.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
 //@RestController
-public class WebPageUserController {
+public class ApiUserController {
 
     @GetMapping("/user")
     public Object user(Principal princial){

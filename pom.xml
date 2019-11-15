@@ -14,6 +14,10 @@
 	<name>${project.artifactId}</name>
 	<description>认证授权中心</description>
 
+	<properties>
+		<fastjson.version>1.2.62</fastjson.version>
+	</properties>
+
 	<dependencies>
 		<!--配置中心客户端-->
 		<dependency>
@@ -40,6 +44,12 @@
 		<dependency>
 			<groupId>org.springframework.security.oauth.boot</groupId>
 			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+		</dependency>
+		<!-- JWT -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
+			<!--<version>1.0.10.RELEASE</version>-->
 		</dependency>
 		<!--数据库-->
 		<dependency>
@@ -68,6 +78,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- JSON -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
 		</dependency>
 	</dependencies>
 

@@ -1,15 +1,13 @@
-package com.flakesoup.auth.webpage.controller;
+package com.flakesoup.auth.jwt.controller;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
-import java.security.Principal;
 
 //@RestController()
-public class WebPageUserPermController {
+public class ApiUserPermController {
     /**
      * 普通用户
      * @return

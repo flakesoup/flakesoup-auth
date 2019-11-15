@@ -19,8 +19,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * web网页权限配置
  */
 
-@Configuration
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, jsr250Enabled = true)
+//@Configuration
+//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, jsr250Enabled = true)
 public class FlakeSoupWebPageSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
