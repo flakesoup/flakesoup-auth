@@ -18,6 +18,8 @@ public class JwtUser implements UserDetails {
     private String userext;
     private List<SimpleGrantedAuthority> authorities;
 
+    public JwtUser() {}
+
     public JwtUser(String username, String password, String ... roles) {
         this(username, password, "", 0L, roles);
     }
