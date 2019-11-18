@@ -16,16 +16,15 @@
 
 	<properties>
 		<fastjson.version>1.2.62</fastjson.version>
-		<flakesoup.uc.version>1.0-SNAPSHOT</flakesoup.uc.version>
 		<feign-httpclient.version>10.5.1</feign-httpclient.version>
 	</properties>
 
 	<dependencies>
-		<!--用户中心模块-->
+		<!--core 工具类-->
 		<dependency>
 			<groupId>com.flakesoup</groupId>
-			<artifactId>flakesoup-user-center-api</artifactId>
-			<version>${flakesoup.uc.version}</version>
+			<artifactId>flakesoup-common-core</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<!--配置中心客户端-->

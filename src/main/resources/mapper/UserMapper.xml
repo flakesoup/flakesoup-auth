@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flakesoup.auth.mapper.UserMapper">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="baseResultMap" type="com.flakesoup.auth.entity.User">
+		<id column="id" property="id"/>
+		<result column="name" property="username"/>
+		<result column="password" property="password"/>
+		<result column="mobile" property="mobile"/>
+		<result column="status" property="status"/>
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+
+	<select id="getUserByName" resultMap="baseResultMap">
+		SELECT
+		`user`.id,
+		`user`.name,
+		`user`.password,
+		`user`.mobile,
+		`user`.status,
+		`user`.create_time
+		FROM
+		`user`
+		WHERE `user`.name = #{name}
+	</select>
+
+	<select id="getUserById" resultMap="baseResultMap">
+		SELECT
+		`user`.id,
+		`user`.name,
+		`user`.password,
+		`user`.mobile,
+		`user`.status,
+		`user`.create_time
+		FROM
+		`user`
+		WHERE
+		`user`.id = #{id}
+	</select>
+
+	<select id="getUserByMobile" resultMap="baseResultMap">
+		SELECT
+		`user`.id,
+		`user`.name,
+		`user`.password,
+		`user`.mobile,
+		`user`.status,
+		`user`.create_time
+		FROM
+		`user`
+		WHERE
+		`user`.mobile = #{mobile}
+	</select>
+</mapper>

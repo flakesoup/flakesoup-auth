@@ -1,8 +1,7 @@
 package com.flakesoup.auth.jwt.config;
 
-import com.flakesoup.common.core.util.R;
-import com.flakesoup.uc.api.UserCenterApi;
-import com.flakesoup.uc.api.dto.UserDto;
+import com.flakesoup.auth.entity.User;
+import com.flakesoup.auth.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUserDetailService implements UserDetailsService {
     @Autowired
-    private UserCenterApi userCenterApi;
+    private UserService userService;
 
     public JwtUserDetailService() {
     }
@@ -26,20 +25,18 @@ public class JwtUserDetailService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        R<UserDto> resp = userCenterApi.getUserById(30L);
-        UserDto userDto = resp.getData();
+        User user = userService.getUserByName(username);
         JwtUser jwtUser = new JwtUser();
-        BeanUtils.copyProperties(userDto, jwtUser);
+        BeanUtils.copyProperties(user, jwtUser);
+        jwtUser.setUserext(user.getMobile());
+        jwtUser.setUserid(user.getId());
+        jwtUser.setAccountNonExpired(
+            !User.UserStatusEnum.USER_STATUS_EXPIRED.getCode().equals(user.getStatus()));
+        jwtUser.setAccountNonLocked(
+            !User.UserStatusEnum.USER_STATUS_BLOCK.getCode().equals(user.getStatus()));
+        jwtUser.setEnabled(
+            User.UserStatusEnum.USER_STATUS_NORMAL.getCode().equals(user.getStatus()));
         System.out.println(jwtUser);
         return jwtUser;
-
-        // 测试代码
-//        if ("admin".equals(username)) {
-//            return new JwtUser("admin", passwordEncoder.encode("123456"));
-//        }
-//        if ("user".equals(username)) {
-//            return new JwtUser("user", passwordEncoder.encode("123456"));
-//        }
-//        return null;
     }
 }

@@ -18,6 +18,11 @@ public class JwtUser implements UserDetails {
     private String userext;
     private List<SimpleGrantedAuthority> authorities;
 
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private boolean isEnabled;
+    private boolean isCredentialsNonExpired = true;
+
     public JwtUser() {}
 
     public JwtUser(String username, String password, String ... roles) {
@@ -53,21 +58,21 @@ public class JwtUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return isAccountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return isCredentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }
