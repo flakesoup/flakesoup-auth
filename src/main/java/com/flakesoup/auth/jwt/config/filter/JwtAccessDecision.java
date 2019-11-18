@@ -1,5 +1,6 @@
 package com.flakesoup.auth.jwt.config.filter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,11 +22,19 @@ import java.util.List;
 @Component("accessDecision")
 public class JwtAccessDecision {
 
+    @Value("${flakesoup.auth.jwtDynamicUrlPerm:false}")
+    private String jwtDynamicUrlPerm;
+
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     private List<String> ignoreUrls = Arrays.asList("/publicMsg");
 
     public boolean hasPermission(HttpServletRequest request, Authentication auth) {
+        // 动态url权限控制是否打开
+        if ("false".equals(jwtDynamicUrlPerm)) {
+            return true;
+        }
+
         // 不需要登录也能访问的(permitAll)
         for (String url : ignoreUrls) {
             if (antPathMatcher.match(url, request.getRequestURI())) {

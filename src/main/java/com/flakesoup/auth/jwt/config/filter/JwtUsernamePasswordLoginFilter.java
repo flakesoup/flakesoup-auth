@@ -20,8 +20,12 @@ public class JwtUsernamePasswordLoginFilter extends UsernamePasswordAuthenticati
 
     private ThreadLocal<Map<String,String>> threadLocal = new ThreadLocal<>();
 
-    public JwtUsernamePasswordLoginFilter() {
-        super();
+    public JwtUsernamePasswordLoginFilter(String authPath) {
+        if (StringUtils.isEmpty(authPath)) {
+            this.setFilterProcessesUrl("/auth/login");
+        } else {
+            this.setFilterProcessesUrl(authPath);
+        }
     }
 
     @Override

@@ -2,11 +2,9 @@ package com.flakesoup.auth.jwt.config;
 
 import com.flakesoup.auth.jwt.config.filter.JwtAuthenticationHeaderFilter;
 import com.flakesoup.auth.jwt.config.filter.JwtUsernamePasswordLoginFilter;
-import com.flakesoup.auth.jwt.config.handler.JwtLoginExpiredHandler;
-import com.flakesoup.auth.jwt.config.handler.JwtLoginFailedHandler;
-import com.flakesoup.auth.jwt.config.handler.JwtLoginSuccessHandler;
-import com.flakesoup.auth.jwt.config.handler.JwtPermDeniedHandler;
+import com.flakesoup.auth.jwt.config.handler.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -29,6 +27,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Configuration
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    /**
+     * 配置jwt登录验证url
+     */
+    @Value("${flakesoup.auth.jwtAuthPath:/auth/login}")
+    private String jwtAuthPath = "";
 
     /**
      * 登录过滤器的授权提供者
@@ -61,8 +65,16 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 登录成功处理
+     * header验证成功
      */
+    @Bean
+    public JwtHeaderAuthSuccessHandler jwtHeaderAuthSuccessHandler() {
+        return new JwtHeaderAuthSuccessHandler();
+    }
+
+    /**
+      * 登录成功处理
+      */
     @Bean
     public AuthenticationSuccessHandler jwtLoginSuccessHandler() {
         return new JwtLoginSuccessHandler();
@@ -97,9 +109,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public UsernamePasswordAuthenticationFilter jwtUsernamePasswordLoginFilter() throws Exception {
-        UsernamePasswordAuthenticationFilter jwtUsernamePasswordLoginFilter = new JwtUsernamePasswordLoginFilter();
+        UsernamePasswordAuthenticationFilter jwtUsernamePasswordLoginFilter = new JwtUsernamePasswordLoginFilter(jwtAuthPath);
         jwtUsernamePasswordLoginFilter.setAuthenticationManager(this.authenticationManagerBean());
-        //登录成功和失败的操作
+        // 登录成功和失败的操作
         jwtUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(jwtLoginSuccessHandler());
         jwtUsernamePasswordLoginFilter.setAuthenticationFailureHandler(jwtLoginFailedHandler());
         return jwtUsernamePasswordLoginFilter;
@@ -110,7 +122,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     OncePerRequestFilter jwtAuthenticationHeaderFilter() {
-        return new JwtAuthenticationHeaderFilter();
+        JwtAuthenticationHeaderFilter jwtAuthenticationHeaderFilter = new JwtAuthenticationHeaderFilter();
+        jwtAuthenticationHeaderFilter.setSuccessHandler(jwtHeaderAuthSuccessHandler());
+        return jwtAuthenticationHeaderFilter;
     }
 
     @Override
@@ -129,9 +143,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
 
-            .anyRequest().access("@accessDecision.hasPermission(request , authentication)")
-            .and()
-
+            .anyRequest()
+            // url动态权限控制
+            .access("@accessDecision.hasPermission(request , authentication)").and()
             // 将授权提供者注册到授权管理器中(AuthenticationManager)
             .authenticationProvider(jwtAuthenticationProvider)
             .addFilterAfter(jwtUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
