@@ -35,6 +35,12 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
     private String jwtAuthPath = "";
 
     /**
+     * 配置jwt header验证url
+     */
+    @Value("${flakesoup.auth.jwtAuthPath:/auth/check}")
+    private String jwtAuthCheckPath = "";
+
+    /**
      * 登录过滤器的授权提供者
      */
     @Autowired
@@ -122,7 +128,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     OncePerRequestFilter jwtAuthenticationHeaderFilter() {
-        JwtAuthenticationHeaderFilter jwtAuthenticationHeaderFilter = new JwtAuthenticationHeaderFilter();
+        JwtAuthenticationHeaderFilter jwtAuthenticationHeaderFilter = new JwtAuthenticationHeaderFilter(jwtAuthCheckPath);
         jwtAuthenticationHeaderFilter.setSuccessHandler(jwtHeaderAuthSuccessHandler());
         return jwtAuthenticationHeaderFilter;
     }

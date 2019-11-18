@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,8 +27,19 @@ public class JwtAuthenticationHeaderFilter extends OncePerRequestFilter {
 
     private JwtHeaderAuthSuccessHandler successHandler = null;
 
+    private RequestMatcher requiresAuthenticationRequestMatcher;
+
+    public JwtAuthenticationHeaderFilter(String authPath) {
+        requiresAuthenticationRequestMatcher = new AntPathRequestMatcher(authPath);
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (!this.requiresAuthentication(request, response)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = request.getHeader("Authorization");
         if (token==null || token.isEmpty()){
             filterChain.doFilter(request,response);
@@ -57,6 +70,10 @@ public class JwtAuthenticationHeaderFilter extends OncePerRequestFilter {
         // 那最后就会调用.exceptionHandling().authenticationEntryPoint
         // 也就是本列中的"需要登陆"
         filterChain.doFilter(request,response);
+    }
+
+    private boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        return this.requiresAuthenticationRequestMatcher.matches(request);
     }
 
     public void setSuccessHandler(JwtHeaderAuthSuccessHandler successHandler) {
