@@ -2,7 +2,14 @@ env: local
 
 logging:
   level:
-    root: info
+    root: debug
     org.mybatis: debug
     java.sql: debug
-    org.springframework.web: trace
+    org.springframework.web: debug
+
+# spring security 配置
+security:
+  oauth2:
+    resource:
+      loadBalanced: true
+      token-info-uri: http://flakesoup-auth/oauth/check_token

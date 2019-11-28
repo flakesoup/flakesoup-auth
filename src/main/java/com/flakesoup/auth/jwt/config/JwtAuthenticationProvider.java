@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 /**
  * 认证器
  */
-@Component
+//@Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     /**

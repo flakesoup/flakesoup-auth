@@ -19,7 +19,7 @@ import java.util.List;
  *      .authorizeRequests()
  *      .antMatchers("/order").....
  */
-@Component("accessDecision")
+//@Component("accessDecision")
 public class JwtAccessDecision {
 
     @Value("${flakesoup.auth.jwtDynamicUrlPerm:false}")

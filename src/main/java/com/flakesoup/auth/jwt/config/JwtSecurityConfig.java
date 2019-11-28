@@ -25,7 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * JWT配置
  */
-@Configuration
+//@Configuration
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
